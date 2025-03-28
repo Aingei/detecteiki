@@ -6,6 +6,7 @@ import cv2 as cv
 import os
 from ultralytics import YOLO
 from cameracapture import CameraCapture  # ใช้ CameraCapture แทน WindowCapture
+import math
 
 # โหลดโมเดล YOLO
 model = YOLO('/home/aing/abudetecttest/testty.pt')
@@ -45,10 +46,21 @@ class mainRun(Node):
         height, width = plot_img.shape[:2]
 
         # วาดเส้นแบ่งหน้าจอออกเป็น 4 ส่วน
-        part_width = width // 4
-        cv.line(plot_img, (part_width, 0), (part_width, height), (0, 255, 0), 2)
-        cv.line(plot_img, (2 * part_width, 0), (2 * part_width, height), (0, 255, 0), 2)
-        cv.line(plot_img, (3 * part_width, 0), (3 * part_width, height), (0, 255, 0), 2)
+        center_x = width // 2
+        center_y = height // 2
+
+        distance = math.sqrt((self.x - center_x) ** 2 + (self.y - center_y) ** 2)
+
+
+        cv.circle(plot_img, (center_x, center_y), 5, (255, 0, 0), -1)
+        cv.circle(plot_img, (int(self.x), int(self.y)), 5, (0, 255, 0), -1)
+
+        # cv.line(plot_img, (part_width, 0), (part_width, height), (0, 255, 0), 2)
+        # cv.line(plot_img, (2 * part_width, 0), (2 * part_width, height), (0, 255, 0), 2)
+        # cv.line(plot_img, (3 * part_width, 0), (3 * part_width, height), (0, 255, 0), 2)
+
+        cv.putText(plot_img, f"Distance: {distance:.2f}", (50, 50), cv.FONT_HERSHEY_SIMPLEX, 
+               0.7, (0, 255, 0), 2)
 
         cv.imshow('Detection Results', plot_img)
         cv.waitKey(1)
