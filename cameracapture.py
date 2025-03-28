@@ -14,7 +14,8 @@ class CameraCapture:
         """
         ถ่ายภาพจากกล้องและคืนค่าเป็น NumPy array (RGB format)
         """
-        ret, frame = self.cap.read()
+        ret, frame = self.cap.read() 
+        # retake
         if not ret:
             raise Exception("Failed to capture image from camera")
 

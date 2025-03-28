@@ -24,18 +24,19 @@ class mainRun(Node):
     def __init__(self):
         super().__init__("Laptop_Node")
 
-        self.sent_where_mob = self.create_publisher(
-            Twist, "send_where_mob", qos_profile=qos.qos_profile_system_default
+        self.sent_where_hoop = self.create_publisher(
+            Twist, "send_where_hoop", qos_profile=qos.qos_profile_system_default
         )
         
         self.sent_data_timer = self.create_timer(0.05, self.sendData)
     
-    def detectMobs(self):
+    def detectHoop(self):
         screenshot = camcap.get_screenshot()  # ได้ภาพจากกล้อง (RGB อยู่แล้ว)
         results = model.predict(screenshot)
         
         # ตรวจสอบว่ามีวัตถุถูกตรวจจับหรือไม่
-        if len(results[0].boxes) > 0:
+        if len(results[0].boxes) > 0: 
+            # len คือจำนวนสมาชิก
             self.x = results[0].boxes.xywh[0][0].item()
             self.y = results[0].boxes.xywh[0][1].item()
         else:
@@ -50,9 +51,10 @@ class mainRun(Node):
         center_y = height // 2
 
         distance = math.sqrt((self.x - center_x) ** 2 + (self.y - center_y) ** 2)
-
+        # พีทากอรัส
 
         cv.circle(plot_img, (center_x, center_y), 5, (255, 0, 0), -1)
+        # -1 คือเติมสี
         cv.circle(plot_img, (int(self.x), int(self.y)), 5, (0, 255, 0), -1)
 
         # cv.line(plot_img, (part_width, 0), (part_width, height), (0, 255, 0), 2)
@@ -61,16 +63,18 @@ class mainRun(Node):
 
         cv.putText(plot_img, f"Distance: {distance:.2f}", (50, 50), cv.FONT_HERSHEY_SIMPLEX, 
                0.7, (0, 255, 0), 2)
+        
+        # 2f ทศนิยม 2 ตน (50,50) ตน ข้อความ 0.7 ขนาด 2 ความหนา
 
         cv.imshow('Detection Results', plot_img)
         cv.waitKey(1)
         
     def sendData(self):
-        mobdata_msg = Twist()
-        self.detectMobs()
-        mobdata_msg.linear.x = self.x
-        mobdata_msg.linear.y = self.y
-        self.sent_where_mob.publish(mobdata_msg)
+        hoopdata_msg = Twist()
+        self.detectHoop()
+        hoopdata_msg.linear.x = self.x
+        hoopdata_msg.linear.y = self.y
+        self.sent_where_hoop.publish(hoopdata_msg)
         
 def main():
     rclpy.init()
