@@ -9,7 +9,7 @@ from cameracapture import CameraCapture  # ใช้ CameraCapture แทน Win
 import math
 
 # โหลดโมเดล YOLO
-model = YOLO('/home/aing/abudetecttest/testty.pt')
+model = YOLO('/home/aing/abudetecttest/onlyhoop.pt')
 
 # ใช้งานกล้องแทนการจับภาพหน้าจอ
 camcap = CameraCapture(camera_index=0)  # ใช้กล้องหลัก (0)
@@ -20,12 +20,16 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 class mainRun(Node):
     x: float = 0.0
     y: float = 0.0
-    
+
     def __init__(self):
+
         super().__init__("Laptop_Node")
 
+        self.center_x = 0.0
+        self.center_y = 0.0
+
         self.sent_where_hoop = self.create_publisher(
-            Twist, "send_where_hoop", qos_profile=qos.qos_profile_system_default
+            Twist, "/shaq/send_where_hoop", qos_profile=qos.qos_profile_system_default
         )
         
         self.sent_data_timer = self.create_timer(0.05, self.sendData)
@@ -47,13 +51,14 @@ class mainRun(Node):
         height, width = plot_img.shape[:2]
 
         # วาดเส้นแบ่งหน้าจอออกเป็น 4 ส่วน
-        center_x = width // 2
-        center_y = height // 2
+        self.center_x = width // 2
+        self.center_y = height // 2
 
-        distance = math.sqrt((self.x - center_x) ** 2 + (self.y - center_y) ** 2)
+        distancex = self.x - self.center_x
+        distancey = self.center_y - self.y
         # พีทากอรัส
 
-        cv.circle(plot_img, (center_x, center_y), 5, (255, 0, 0), -1)
+        cv.circle(plot_img, (self.center_x, self.center_y), 5, (255, 0, 0), -1)
         # -1 คือเติมสี
         cv.circle(plot_img, (int(self.x), int(self.y)), 5, (0, 255, 0), -1)
 
@@ -61,7 +66,9 @@ class mainRun(Node):
         # cv.line(plot_img, (2 * part_width, 0), (2 * part_width, height), (0, 255, 0), 2)
         # cv.line(plot_img, (3 * part_width, 0), (3 * part_width, height), (0, 255, 0), 2)
 
-        cv.putText(plot_img, f"Distance: {distance:.2f}", (50, 50), cv.FONT_HERSHEY_SIMPLEX, 
+        cv.putText(plot_img, f"Distancex: {distancex:.2f}", (50, 50), cv.FONT_HERSHEY_SIMPLEX, 
+               0.7, (0, 255, 0), 2)
+        cv.putText(plot_img, f"Distancey: {distancey:.2f}", (50, 25), cv.FONT_HERSHEY_SIMPLEX, 
                0.7, (0, 255, 0), 2)
         
         # 2f ทศนิยม 2 ตน (50,50) ตน ข้อความ 0.7 ขนาด 2 ความหนา
@@ -74,6 +81,8 @@ class mainRun(Node):
         self.detectHoop()
         hoopdata_msg.linear.x = self.x
         hoopdata_msg.linear.y = self.y
+        hoopdata_msg.angular.x = float(self.center_x)
+        hoopdata_msg.angular.y = float(self.center_y)
         self.sent_where_hoop.publish(hoopdata_msg)
         
 def main():

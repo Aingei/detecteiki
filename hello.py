@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # โหลดโมเดล YOLO11n
-model = YOLO("testty.pt")  # ใช้ pretrained model หรือระบุ path ถ้ามีไฟล์ custom
+model = YOLO("onlyhoop.pt")  # ใช้ pretrained model หรือระบุ path ถ้ามีไฟล์ custom
 
 # เปิดกล้อง (0 คือกล้อง default)
 cap = cv2.VideoCapture(0)
