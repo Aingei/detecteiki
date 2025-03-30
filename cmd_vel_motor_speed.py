@@ -65,8 +65,10 @@ class Cmd_vel_to_motor_speed(Node):
         self.motorshooter3Speed : float = 0
         self.yaw : float = 0
         self.yaw_setpoint = self.yaw
+
         self.main_run_instance = mainRun()
         self.middlecam = self.main_run_instance.center_x
+        # self.middlecam : float = 0 
         
         self.macro_active = False
         self.previous_manual_turn = time.time()
@@ -119,7 +121,7 @@ class Cmd_vel_to_motor_speed(Node):
         self.hoop_distance_x = msg.linear.x
         self.hoop_distance_y = msg.linear.y
         self.middlecam = msg.angular.x
-        self.middlecam = msg.angular.y
+        # self.middlecam = msg.angular.y
 
     def get_robot_angle(self,msg):
         self.yaw = WrapRads(To_Radians(msg.angular.x))
@@ -141,7 +143,7 @@ class Cmd_vel_to_motor_speed(Node):
         if mode == 1:
             rotation = self.controller.Calculate(WrapRads(self.yaw_setpoint - self.yaw)) 
         elif mode == 2:
-            rotation = self.controller.Calculate(self.hooprotage - self.main_run_instance.center_x)
+            rotation = self.hooprotage.Calculate(self.hoop_distance_x - self.middlecam)
 
         if self.turnSpeed != 0 or (CurrentTime - self.previous_manual_turn < 0.45):
             rotation = self.turnSpeed
@@ -186,7 +188,7 @@ class Cmd_vel_to_motor_speed(Node):
     def sendData(self):
         motorspeed_msg = Twist()
         motorshooter_msg = Twist()
-       
+
         motorspeed_msg.linear.x = float(self.motor1Speed)
         motorspeed_msg.linear.y = float(self.motor2Speed)
         motorspeed_msg.angular.x = float(self.motor3Speed)

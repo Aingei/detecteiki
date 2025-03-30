@@ -9,10 +9,10 @@ from cameracapture import CameraCapture  # ใช้ CameraCapture แทน Win
 import math
 
 # โหลดโมเดล YOLO
-model = YOLO('/home/aing/abudetecttest/onlyhoop.pt')
+model = YOLO('/home/aing/abudetecttest/hoop348.pt')
 
 # ใช้งานกล้องแทนการจับภาพหน้าจอ
-camcap = CameraCapture(camera_index=0)  # ใช้กล้องหลัก (0)
+camcap = CameraCapture(camera_index=2)  # ใช้กล้องหลัก (0)
 
 # เปลี่ยนไปที่ไดเร็กทอรีของไฟล์นี้
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
