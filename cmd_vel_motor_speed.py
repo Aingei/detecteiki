@@ -46,7 +46,7 @@ class Cmd_vel_to_motor_speed(Node):
         # self.motor2_enabled = self.get_parameter("motor2").get_parameter_value().bool_value
         # self.motor3_enabled = self.get_parameter("motor3").get_parameter_value().bool_value
         # self.motor4_enabled = self.get_parameter("motor4").get_parameter_value().bool_value
-        self.mode = 1
+        # self.mode = 1
         
         self.moveSpeed: float = 0.0
         self.slideSpeed: float = 0.0
@@ -140,9 +140,9 @@ class Cmd_vel_to_motor_speed(Node):
         self.mode = self.get_parameter("mode").get_parameter_value().integer_value
 
 
-        if mode == 1:
+        if self.mode == 1:
             rotation = self.controller.Calculate(WrapRads(self.yaw_setpoint - self.yaw)) 
-        elif mode == 2:
+        elif self.mode == 2:
             rotation = self.hooprotage.Calculate(self.hoop_distance_x - self.middlecam)
 
         if self.turnSpeed != 0 or (CurrentTime - self.previous_manual_turn < 0.45):
