@@ -75,8 +75,8 @@ class mainRun(Node):
         
         # 2f ทศนิยม 2 ตน (50,50) ตน ข้อความ 0.7 ขนาด 2 ความหนา
 
-        # cv.imshow('Detection Results', plot_img)
-        # cv.waitKey(1)
+        cv.imshow('Detection Results', plot_img)
+        cv.waitKey(1)
         
     def sendData(self):
         hoopdata_msg = Twist()
